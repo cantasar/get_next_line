@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctasar <ctasar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/24 10:40:58 by ctasar            #+#    #+#             */
-/*   Updated: 2023/07/24 13:25:26 by ctasar           ###   ########.fr       */
+/*   Updated: 2023/07/24 14:08:32 by ctasar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*read_all(int fd, char *all)
 {
@@ -94,30 +94,20 @@ char	*move_all(char *all)
 
 char	*get_next_line(int fd)
 {
-	static char	*all;
+	static char	*all[OPEN_MAX];
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
-	all = read_all(fd, all);
-	if (!all || !*all)
+		return (NULL);
+	all[fd] = read_all(fd, all[fd]);
+	if (!all[fd] || !*all[fd])
 	{
-		if (all)
-			free(all);
-		all = NULL;
+		if (all[fd])
+			free(all[fd]);
+		all[fd] = NULL;
 		return (NULL);
 	}
-	line = get_first_line(all);
-	all = move_all(all);
+	line = get_first_line(all[fd]);
+	all[fd] = move_all(all[fd]);
 	return (line);
 }
-
-// int main()
-// {
-// 	int	fd = open("text.txt", O_RDONLY);
-// 	get_next_line(fd);
-// 	system("leaks a.out");
-
-// 	close(fd);
-// 	return 0;
-// }
